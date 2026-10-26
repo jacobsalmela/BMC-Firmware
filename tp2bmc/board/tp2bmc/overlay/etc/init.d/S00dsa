@@ -161,6 +161,12 @@ case "$1" in
         # Ethernet interface
         ip link set eth0 name dsa
 
+        # Expand DSA conduit MTU to 1520 to provide headroom for 1492 PPPoE + 14 Eth + 4 DSA + 4 VLAN
+        ip link set dsa mtu 1520
+
+        # Disable 802.3x flow control on WAN uplink to prevent router hardware NAT stalls
+        ethtool -A ge0 rx off tx off
+
         # Perform migration of interfaces
         migrate_overlay_interfaces_to_v2_1
         ;;
